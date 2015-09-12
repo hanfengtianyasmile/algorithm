@@ -42,7 +42,7 @@ int LocateElem(SeqList L,DataType e){
 //插入元素 
 int InsertList(SeqList *L,int i,DataType e){
 	int j;
-	if(i < 1 || i > length + 1){
+	if(i < 1 || i > L->length + 1){
 		printf("插入位置不合法\n");
 		return -1;
 	}else if(L->length >= ListSize){
@@ -76,9 +76,6 @@ int DeleteList(SeqList *L,int i,DataType *e){
 	}
 } 
 
-int main(){
-	
-}
 
 
  
