@@ -1,87 +1,122 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
+#define STACK_SIZE 100
 
-#define StackSize 100
+#define STACK_INCR 30
 
-typedef int DataType;
+typedef char ElemType;
 
 typedef struct{
-	DataType stack[StackSize];
-	int top;
-}SeqStack;
-
+	ElemType *base;
+	ElemType *top;
+	int stackSize;
+}sqStack;
 
 //初始化栈
-void InitStack(SeqStack *s){
-	s->top = 0;  //栈顶指针置为0 
+ 
+initStack(sqStack *s){
+	s->base = (ElemType *)malloc(STACK_SIZE * sizeof(ElemType));
+	if(!s->base)
+		exit(0);
+		
+	s->top = s->base;
+	s->stackSize = STACK_SIZE;
+}
+
+
+
+//入栈 
+
+Push(sqStack *s,ElemType e){
+	if(s->top - s->base >= s->stackSize){
+		s->base = (ElemType *)realloc(s->base,(s->stackSize + STACK_INCR)*sizeof(ElemType));
+		
+		if(!s->base)
+			exit(0);
+			
+		s->top = s->base + s->stackSize;   //设置栈顶
+		s->stackSize = s->stackSize + STACK_INCR;  //设置栈的最大容量 
+		
+	}
+	
+	*(s->top) = e;
+	s->top++;
+
 } 
 
 
-//判断栈是否为空
-int StackEmpty(SeqStack *s){
-	if(s->top == 0)
-		return 1;
-	else
-		return 0;
+//出栈
+Pop(sqStack *s,ElemType *e){
+	if(s->top == s->base)
+		return;
+	*e = *--(s->top);
 } 
 
-//取栈顶元素
- int GetTop(SeqStack *s,DataType *e){
- 	if(s->top <= 0){
- 		printf("栈已经空\n");
- 		return 0;
- 	}else{
- 		*e = s->stack[s->top-1];
- 		return 1;
- 	}
- }
- 
- 
- //将元素入栈
- int PushStack(SeqStack *s,DataType e){
- 	if(s->top >= StackSize){
- 		printf("栈已满，不能入栈\n");
- 		return 0;
- 	}else{
- 		s->stack[s->top] = e;
- 		s->top++;
- 		return 1;
- 	}
- } 
- //将栈顶元素出栈
- int PopStack(SeqStack *s,DataType *e){
- 	if(s->top == 0){
- 		printf("栈中已经没有元素，不能进行出栈操作\n");
- 		return 0;
- 	}else{
- 		s->top--;
- 		*e = s->stack[s->top];
- 		return 1;
- 	}
- } 
- 
- 
- //求栈的长度
- int StackLength(SeqStack *s){
- 	return s->top;
- } 
- 
- 
- //清空栈 
- void ClearStck(SeqStack *s){
- 	s->top = 0;
- }
- 
- 
- 
+
+//清空一个栈
+ClearStack(sqStack *s){
+	s->top = s->base;
+} 
+
+
+
+//销毁一个栈
+DestoryStack(sqStack *s){
+	int i,len;
+	len = s->stackSize;
+	for(i = len;i>=0;i--){
+		free(s->top);
+		s->top--;
+	}
+	
+	s->base = s->top = NULL;
+	s->stackSize = 0;
+	
+} 
+
+//栈的当前容量
+int StackLen(sqStack s){
+	return (s.top - s.base);
+} 
+
+
+
+//实战：二进制转化为十进制 
  int main(){
+ 	ElemType c;
+ 	sqStack s;
+ 	int len,i,sum = 0;
+ 	
+ 	initStack(&s);
+ 	
+ 	printf("请输入二进制数，输入#符号表示结束\n");
+ 	
+ 	scanf("%c",&c);
+ 	
+ 	while(c != '#'){
+ 		Push(&s,c);
+ 		scanf("%c",&c);
+ 	}
+ 	
+ 	getchar();
+ 	
+ 	len = StackLen(s);
+ 	
+ 	printf("栈的当前容量是: %d\n",len);
+ 	
+ 	for(i = 0; i < len;i++){
+ 		Pop(&s,&c);
+ 		sum = sum + (c-'0') * pow(2,i);   //不太懂呢 
+ 	}
+ 	
+ 	printf("转化为十进制数是：%d\n",sum);
+ 	
  	return 0;
+ 	
+ 	
  }
- 
- 
- 
- 
  
  
  
